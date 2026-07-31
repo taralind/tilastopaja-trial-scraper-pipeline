@@ -1,0 +1,40 @@
+name: Update Tilastopaja Database
+
+on:
+  schedule:
+    # Every Monday at 9am UTC
+    - cron: "0 9 * * 1"
+
+  workflow_dispatch:
+
+
+jobs:
+  update:
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+
+    - name: Setup Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.12"
+
+
+    - name: Install dependencies
+      run: |
+        pip install -r requirements.txt
+
+
+    - name: Run update pipeline
+      env:
+        TILASTOPAJA_USERNAME: ${{ secrets.TILASTOPAJA_USERNAME }}
+        TILASTOPAJA_PASSWORD: ${{ secrets.TILASTOPAJA_PASSWORD }}
+        DB_URL: ${{ secrets.DB_URL }}
+
+      run: |
+        python update_pipeline.py
